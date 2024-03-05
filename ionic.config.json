@@ -1,0 +1,8 @@
+{
+  "name": "Mechanic",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "id": "a8dee43c"
+}
