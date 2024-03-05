@@ -1,0 +1,22 @@
+#map {
+  // height: 40vh;
+  width: 100vw;
+  height: 100vh;
+  background: #f0f0f0;
+}
+.truck {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #3887be;
+  pointer-events: none;
+}
+
+
+
+.mapboxgl-canvas-container {
+
+  height: 100vh;
+
+}
