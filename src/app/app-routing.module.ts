@@ -4,12 +4,16 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'mapbox',
+    redirectTo: 'home',
     pathMatch: 'full'
   },
   {
-    path: 'mapbox',
+    path: 'home',
     loadChildren: () => import('./pages/mapbox/mapbox.module').then( m => m.MapboxPageModule)
+  },
+  {
+    path: 'driver',
+    loadChildren: () => import('./pages/driver/driver.module').then( m => m.DriverPageModule)
   }
 ];
 

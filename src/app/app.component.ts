@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
 export class AppComponent {
   public appPages = [
     { title: 'Home', url: '/home', icon: 'home' },
+    { title: 'Driver', url: '/driver', icon: 'speedometer' },
   ];
   public labels = ['Share', 'Settings', 'Profile'];
   constructor() {}
