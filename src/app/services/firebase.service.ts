@@ -17,8 +17,8 @@ export class FirebaseService {
 
   constructor(private auth: Auth,private firestore: Firestore) { }
 
-  getRequests(): Observable<Request[]> {
-    const requestsRef = collection(this.firestore, 'items');
+  getItems(item: any): Observable<Request[]> {
+    const requestsRef = collection(this.firestore, item);
     return collectionData(requestsRef, { idField: 'id'}) as Observable<Request[]>;
   }
 
@@ -27,10 +27,6 @@ export class FirebaseService {
     return docData(noteDocRef, { idField: 'id' }) as Observable<Request>;
   }
 
-  addRequest(data: Request) {
-    const requestsRef = collection(this.firestore, 'items');
-    return addDoc(requestsRef, data);
-  }
 
   deleteRequest(data: Request) {
     const noteDocRef = doc(this.firestore, `items/${data.id}`);
@@ -44,10 +40,22 @@ export class FirebaseService {
 
 	async addMechanic(data: any) {
 		const user = this.auth.currentUser;
-		// const path = `uploads/${user?.uid}/profile.webp`;
 
 		try {
 			const userDocRef = doc(this.firestore, `users/${user?.uid}`);
+			await setDoc(userDocRef, data);
+			return true;
+		} catch (e) {
+			console.log("🚀 ~ FirebaseService ~ addMechanic ~ e:", e)
+			return null;
+		}
+	}
+
+	async addRequest(data: any, id: any) {
+		// const user = this.auth.currentUser;
+
+		try {
+			const userDocRef = doc(this.firestore, `requests/${id}`);
 			await setDoc(userDocRef, data);
 			return true;
 		} catch (e) {

@@ -8,6 +8,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { MapboxService } from 'src/app/services/mapbox.service';
 import { RequestPage } from './request/request.page';
+import { FirebaseService } from 'src/app/services/firebase.service';
+import { Subscription } from 'rxjs';
 
 declare const mapboxgl: any;
 
@@ -31,6 +33,9 @@ export class MapboxPage implements AfterViewInit {
 
 
   markers: any;
+  markers1: any[] = [];
+  firebaseSubscription!: Subscription;
+
 
   public userLocation!: { latitude: number; longitude: number; bearing: number };
   private ws!: WebSocket;
@@ -39,7 +44,7 @@ export class MapboxPage implements AfterViewInit {
 
   constructor(
     private modalCtrl: ModalController, private loadingCtrl: LoadingController,
-    private authService: AuthService, private alertController: AlertController
+    private authService: AuthService, private alertController: AlertController, private firebaseService: FirebaseService
   ) {
     this.user = this.authService.user;
 
@@ -98,7 +103,9 @@ export class MapboxPage implements AfterViewInit {
       console.log("🚀 ~ MapboxPage ~ geolocate.on ~ e:", e)
       this.start = [e.coords.longitude, e.coords.latitude];
 
-      this.addMarkers();
+      setTimeout(() => {
+        this.addMarkers();
+      }, 2000);
     });
 
   }
@@ -183,10 +190,11 @@ export class MapboxPage implements AfterViewInit {
 
 
   // Modal
-  async requestModal() {
+  async requestModal(marker:any) {
+    console.log("🚀 ~ MapboxPage ~ requestModal ~ marker:", marker)
     const modal = await this.modalCtrl.create({
       component: RequestPage,
-      componentProps: { steps: this.instructionSteps },
+      componentProps: { data: marker, coodinates: this.start },
       breakpoints: [0, 0.8],
       initialBreakpoint: 0.5
     });
@@ -225,7 +233,53 @@ export class MapboxPage implements AfterViewInit {
     await alert.present();
   }
 
+
+  addMarkers() {
+
+    this.markers.forEach((marker: any) => {
+      const popup = new mapboxgl.Popup().setHTML(
+        `<h3 style="color: #000">${marker.title}</h3><p style="color: #000">${marker.phone}</p>`
+      );
+
+      const markerElement = new mapboxgl.Marker()
+        .setLngLat(marker.coordinates)
+        .setPopup(popup)
+        .addTo(this.map);
+
+      // Add click event listener to the marker
+      markerElement.getElement().addEventListener('click', () => {
+        this.getRoute(this.start, marker.coordinates);
+        this.requestModal(marker);
+      });
+    });
+  }
+
   getMarkers() {
+    this.firebaseSubscription = this.firebaseService.getItems('users').subscribe({
+      next: (res: any[]) => {
+        console.log("User data from Firebase:", res);
+        this.markers = res.map(element => ({
+          coordinates: [element.longitude, element.latitude],
+          title: element.company,
+          address: element.address,
+          email: element.email,
+          id: element.id,
+          phone: element.phone
+        }));
+      },
+      error: (error: any) => {
+        console.error("Error fetching user data:", error);
+        // Handle error (e.g., show error message)
+      },
+      complete: () => {
+        console.log("Markers created:", this.markers);
+        // Any additional logic after markers creation
+      }
+    });
+  }
+
+
+  getMarkers_1() {
     const baseCoordinates = [36.7292470215261, -1.1006648395070264]; // Nairobi CBD marker
 
     this.markers = Array.from({ length: 10 }, (_, index) => {
@@ -245,25 +299,5 @@ export class MapboxPage implements AfterViewInit {
     });
   }
 
-
-  addMarkers() {
-
-    this.markers.forEach((marker: any) => {
-      const popup = new mapboxgl.Popup().setHTML(
-        `<h3 style="color: #000">${marker.title}</h3><p style="color: #000">${marker.description}</p>`
-      );
-
-      const markerElement = new mapboxgl.Marker()
-        .setLngLat(marker.coordinates)
-        .setPopup(popup)
-        .addTo(this.map);
-
-      // Add click event listener to the marker
-      markerElement.getElement().addEventListener('click', () => {
-        this.getRoute(this.start, marker.coordinates);
-        this.requestModal();
-      });
-    });
-  }
 
 }

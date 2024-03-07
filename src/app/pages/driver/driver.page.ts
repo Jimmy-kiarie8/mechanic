@@ -16,7 +16,7 @@ export class DriverPage implements OnInit {
   user: any;
 
   constructor(private authService: AuthService, private firebaseService: FirebaseService,  private cd: ChangeDetectorRef, private alertCtrl: AlertController, private modalCtrl: ModalController, private loadingController: LoadingController,private alertController: AlertController) {
-    this.firebaseService.getRequests().subscribe(res => {
+    this.firebaseService.getItems('users').subscribe(res => {
       this.requests = res;
       this.cd.detectChanges();
     });
@@ -50,7 +50,7 @@ export class DriverPage implements OnInit {
         }, {
           text: 'Add',
           handler: res => {
-            this.firebaseService.addRequest({ text: res.text, title: res.title });
+            // this.firebaseService.addRequest({ text: res.text, title: res.title });
           }
         }
       ]
