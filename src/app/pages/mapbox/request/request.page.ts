@@ -11,6 +11,7 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 export class RequestPage implements OnInit {
   @Input() data: any;
   @Input() coodinates: any;
+  @Input() user: any;
 
   constructor(private firebaseService: FirebaseService, private loadingController: LoadingController, private alertController: AlertController, private auth: Auth) { }
 
@@ -28,7 +29,9 @@ export class RequestPage implements OnInit {
     const data = {
       longitude: this.coodinates[0],
       latitude: this.coodinates[1],
-      email: this.auth.currentUser?.email
+      email: this.auth.currentUser?.email,
+      phone: this.user.phone,
+      name: this.user.name
     }
     console.log("🚀 ~ RequestPage ~ requestMechanic ~ data:", data)
 

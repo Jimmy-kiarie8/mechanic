@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, collectionData, doc, docData, addDoc, deleteDoc, updateDoc, setDoc } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 
 import { Auth } from '@angular/fire/auth';
 
@@ -63,4 +63,25 @@ export class FirebaseService {
 			return null;
 		}
 	}
+
+
+
+  getUsersWithProfile(): Observable<any> {
+
+    const usersQuery = collection(this.firestore, 'users');
+    const userProfileQuery = collection(this.firestore, 'userProfile');
+    // const usersQuery = collectionData(requestsRef, { idField: 'id'}) as Observable<Request[]>;
+    const users = collectionData(usersQuery, { idField: 'id'});
+    const profiles = collectionData(userProfileQuery, { idField: 'id'});
+    // return userProfileQuery;
+
+    // Query both collections separately
+    // const usersQuery = this.firestore.collection('users').valueChanges();
+    // const userProfileQuery = this.firestore.collection('userProfile').valueChanges();
+
+    // Combine the results of both queries
+    const res = combineLatest([users, profiles]);
+    console.log("🚀 ~ FirebaseService ~ getUsersWithProfile ~ res:", res)
+    return res;
+  }
 }

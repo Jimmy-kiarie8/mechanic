@@ -29,17 +29,44 @@ export class AuthService {
 
   constructor(private auth: Auth, private firestore: Firestore) { }
 
-  async register({ email, password }: any) {
+  // async register({ email, password }: any) {
+  //   try {
+  //     const user = await createUserWithEmailAndPassword(this.auth, email, password);
+  //     return user;
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
+
+
+  async register(formData: any) {
+    console.log("🚀 ~ AuthService ~ register ~ formData:", formData)
     try {
-      const user = await createUserWithEmailAndPassword(this.auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(this.auth, formData.email, formData.password);
+      const user = userCredential.user;
       console.log("🚀 ~ AuthService ~ register ~ user:", user)
+
+
+			const userDocRef = doc(this.firestore, `userProfile/${user.uid}`);
+
+      await setDoc(userDocRef, {
+        name: formData.name,
+        phone: formData.phone,
+        isMechanic: formData.isMechanic,
+        isDriver: formData.isDriver
+    });
+			// await setDoc(userDocRef, {name: name, phone: phone, isMechanic: isMechanic, isDriver: isDriver});
+
+      // You can store additional information in Firebase Realtime Database or Firestore here
+      // For example, if you're using Firestore:
+      // await collection(this.firestore, 'drivers').doc(this.firestore, user.uid).set(phone);
+
       return user;
-    } catch (e) {
-      console.log("🚀 ~ AuthService ~ register ~ e:", e)
-      return null;
+    } catch (error) {
+      console.error("Error registering user:", error);
+      throw error;
     }
   }
-
   async login({ email, password }: any) {
     try {
       const user = await signInWithEmailAndPassword(this.auth, email, password);
@@ -55,10 +82,10 @@ export class AuthService {
 
 
 	getUserProfile() {
-    return this.auth.currentUser;
+    // return this.auth.currentUser;
 		const user = this.auth.currentUser;
 		console.log("🚀 ~ AuthService ~ getUserProfile ~ user:", user)
-		const userDocRef = doc(this.firestore, `users/${user?.uid}`);
+		const userDocRef = doc(this.firestore, `userProfile/${user?.uid}`);
 		return docData(userDocRef, { idField: 'id' });
 	}
 }

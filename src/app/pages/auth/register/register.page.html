@@ -8,23 +8,38 @@
     <ion-card-content>
       <ion-card>
 
-        <form (ngSubmit)="register()" [formGroup]="credentials">
-          <ion-radio-group value="Driver">
+        <form [formGroup]="credentials">
+          <ion-radio-group formControlName="type"> <!-- Connect the radio group to the form control -->
             <ion-item>
               <ion-label>Driver</ion-label>
-              <ion-radio slot="end" value="Driver"></ion-radio>
+              <ion-radio slot="end" value="Driver"></ion-radio> <!-- Set the value to 'Driver' -->
             </ion-item>
 
             <ion-item>
               <ion-label>Mechanic</ion-label>
-              <ion-radio slot="end" value="Mechanic"></ion-radio>
+              <ion-radio slot="end" value="Mechanic"></ion-radio> <!-- Set the value to 'Mechanic' -->
             </ion-item>
-            </ion-radio-group>
+          </ion-radio-group>
 
           <ion-item lines="full">
             <ion-label position="floating">
               <ion-icon name="mail-open-sharp"></ion-icon> Email</ion-label>
-            <ion-input type="email" formControlName="email" required [(ngModel)]="form.email">
+            <ion-input type="email" formControlName="email" required [(ngModel)]="form.email" name="email">
+            </ion-input>
+          </ion-item>
+
+
+          <ion-item lines="full">
+            <ion-label position="floating">
+              <ion-icon name="call"></ion-icon> Phone</ion-label>
+            <ion-input type="text" formControlName="phone" required [(ngModel)]="form.phone" name="phone">
+            </ion-input>
+          </ion-item>
+
+          <ion-item lines="full">
+            <ion-label position="floating">
+              <ion-icon name="call"></ion-icon> name</ion-label>
+            <ion-input type="text" formControlName="name" required [(ngModel)]="form.name" name="name">
             </ion-input>
           </ion-item>
 
@@ -43,7 +58,7 @@
 
           <ion-item lines="full">
             <ion-label position="floating"><ion-icon name="lock-closed-sharp"></ion-icon> Password</ion-label>
-            <ion-input type="password" formControlName="password" required [(ngModel)]="form.password"></ion-input>
+            <ion-input type="password" formControlName="password" required [(ngModel)]="form.password" name="password"></ion-input>
           </ion-item>
 
           <ng-container

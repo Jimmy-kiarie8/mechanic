@@ -33,14 +33,20 @@ export class AccountPage implements AfterViewInit {
     private firebaseService: FirebaseService, private loadingController: LoadingController,
     private authService: AuthService, private alertController: AlertController,private auth: Auth
   ) {
-    this.user = this.auth.currentUser;
 
   }
   ngAfterViewInit() {
     this.initializeMap();
+
+
+    setTimeout(() => {
+      this.getUserProfile();
+    }, 5000);
   }
 
   async initializeMap() {
+    const loading = await this.loadingController.create();
+    await loading.present();
     // Load the map
     mapboxgl.accessToken = environment.mapPublicKey;
 
@@ -84,10 +90,14 @@ export class AccountPage implements AfterViewInit {
     geolocate.on('geolocate', (e: any) => {
       this.addMarker([e.coords.longitude, e.coords.latitude]);
 
-      console.log("🚀 ~ MapboxPage ~ geolocate.on ~ e:", e)
-      // this.start = [e.coords.longitude, e.coords.latitude];
+      this.location = {lat: e.coords.longitude, lng: e.coords.latitude};
 
     });
+
+    setTimeout(() => {
+    loading.dismiss();
+
+    }, 3000);
 
   }
 
@@ -150,5 +160,17 @@ export class AccountPage implements AfterViewInit {
       });
       await alert.present();
     }
+  }
+
+
+  getUserProfile() {
+    // this.firebaseService.getUsersWithProfile()
+
+    this.authService.getUserProfile().subscribe((res:any) => {
+      console.log("🚀 ~ MapboxPage ~ this.authService.getUserProfile ~ res:", res)
+      // this.user = res
+      this.form.name = res.name
+      this.form.phone = res.phone
+    });
   }
 }

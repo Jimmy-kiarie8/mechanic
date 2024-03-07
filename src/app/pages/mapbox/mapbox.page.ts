@@ -24,7 +24,7 @@ export class MapboxPage implements AfterViewInit {
   order: any;
 
   instructionSteps = null;
-  user = null;
+  user: any;
 
   start: any;
   end: any;
@@ -33,7 +33,7 @@ export class MapboxPage implements AfterViewInit {
 
 
   markers: any;
-  markers1: any[] = [];
+  usersWithProfile: any[] = [];
   firebaseSubscription!: Subscription;
 
 
@@ -46,12 +46,15 @@ export class MapboxPage implements AfterViewInit {
     private modalCtrl: ModalController, private loadingCtrl: LoadingController,
     private authService: AuthService, private alertController: AlertController, private firebaseService: FirebaseService
   ) {
-    this.user = this.authService.user;
 
   }
 
   ngAfterViewInit() {
     this.loadMap();
+
+    setTimeout(() => {
+      this.getUserProfile();
+    }, 5000);
 
   }
 
@@ -100,7 +103,6 @@ export class MapboxPage implements AfterViewInit {
 
 
     geolocate.on('geolocate', (e: any) => {
-      console.log("🚀 ~ MapboxPage ~ geolocate.on ~ e:", e)
       this.start = [e.coords.longitude, e.coords.latitude];
 
       setTimeout(() => {
@@ -190,11 +192,10 @@ export class MapboxPage implements AfterViewInit {
 
 
   // Modal
-  async requestModal(marker:any) {
-    console.log("🚀 ~ MapboxPage ~ requestModal ~ marker:", marker)
+  async requestModal(marker: any) {
     const modal = await this.modalCtrl.create({
       component: RequestPage,
-      componentProps: { data: marker, coodinates: this.start },
+      componentProps: { data: marker, coodinates: this.start, user: this.user },
       breakpoints: [0, 0.8],
       initialBreakpoint: 0.5
     });
@@ -257,7 +258,6 @@ export class MapboxPage implements AfterViewInit {
   getMarkers() {
     this.firebaseSubscription = this.firebaseService.getItems('users').subscribe({
       next: (res: any[]) => {
-        console.log("User data from Firebase:", res);
         this.markers = res.map(element => ({
           coordinates: [element.longitude, element.latitude],
           title: element.company,
@@ -272,7 +272,6 @@ export class MapboxPage implements AfterViewInit {
         // Handle error (e.g., show error message)
       },
       complete: () => {
-        console.log("Markers created:", this.markers);
         // Any additional logic after markers creation
       }
     });
@@ -299,5 +298,25 @@ export class MapboxPage implements AfterViewInit {
     });
   }
 
+  getUsersWithProfile() {
+    // this.firebaseService.getUsersWithProfile()
+
+    this.firebaseService.getUsersWithProfile().subscribe((res) => {
+      this.usersWithProfile = res[0].map((user: any) => {
+        const profile = res[1].find((profile: any) => profile.userId === user.uid);
+        return { ...user, ...profile };
+      });
+
+    });
+  }
+
+  getUserProfile() {
+    // this.firebaseService.getUsersWithProfile()
+
+    this.authService.getUserProfile().subscribe((res) => {
+      console.log("🚀 ~ MapboxPage ~ this.authService.getUserProfile ~ res:", res)
+      this.user = res
+    });
+  }
 
 }
