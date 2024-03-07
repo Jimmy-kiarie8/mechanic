@@ -1,0 +1,46 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>account</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="getCurrentLocation()">
+        <ion-icon name="locate"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div id="map" #mapElement></div>
+
+
+  <form>
+    <ion-item lines="full">
+      <ion-label position="floating">
+        <ion-icon name="mail-open-sharp"></ion-icon> Name</ion-label>
+      <ion-input type="text" required [(ngModel)]="form.name" name="name">
+      </ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating">
+        <ion-icon name="call"></ion-icon> Phone</ion-label>
+      <ion-input type="text" required [(ngModel)]="form.phone"  name="phone">
+      </ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating">
+        <ion-icon name="location"></ion-icon> Address</ion-label>
+      <ion-input type="text" required [(ngModel)]="form.address"  name="address">
+      </ion-input>
+    </ion-item>
+
+
+    <ion-row>
+      <ion-col>
+        <ion-button type="submit" color="primary" expand="block" shape="round" (click)="update()">Update</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+</ion-content>

@@ -1,0 +1,53 @@
+<ion-content [fullscreen]="true" color="light-back">
+  <ion-card style="box-shadow: none;margin: 10% 0 0 0;">
+    <ion-card-header>
+      <img src="../../../../assets/logo.png" alt="Mechanic logo" class="logo">
+      <ion-card-subtitle>Mechanic</ion-card-subtitle>
+      <ion-card-title><b>Let's sign you in.</b></ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-card>
+
+	<form (ngSubmit)="login()" [formGroup]="credentials">
+          <ion-item lines="full">
+            <ion-label position="floating">
+              <ion-icon name="mail-open-sharp"></ion-icon> Email</ion-label>
+            <ion-input type="email" formControlName="email" required [(ngModel)]="form.email">
+            </ion-input>
+          </ion-item>
+
+          <ng-container *ngIf="(credentials.get('email')?.hasError('required')) && (credentials.get('email')?.dirty || credentials.get('email')?.touched)">
+            <div class="error-message">
+              Email is required
+            </div>
+          </ng-container>
+          <ng-container *ngIf="(credentials.get('email')?.hasError('email')) && (credentials.get('email')?.dirty || credentials.get('email')?.touched)">
+            <div class="error-message">
+              Please enter a valid email
+            </div>
+          </ng-container>
+
+
+          <ion-item lines="full">
+            <ion-label position="floating"><ion-icon name="lock-closed-sharp"></ion-icon> Password</ion-label>
+            <ion-input type="password" formControlName="password" required [(ngModel)]="form.password"></ion-input>
+          </ion-item>
+
+          <ng-container *ngIf="(credentials.get('password')?.hasError('required')) && (credentials.get('password')?.dirty || credentials.get('password')?.touched)">
+            <div class="error-message">
+              Password is required
+            </div>
+          </ng-container>
+          <ion-row>
+            <ion-col>
+              <ion-button type="submit" color="primary" expand="block" shape="round" (click)="login()">Sign In</ion-button>
+              <a [routerLink]="['/register']" class="small-text">Signup?</a>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-card>
+
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+

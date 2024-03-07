@@ -4,7 +4,6 @@ import * as turf from '@turf/turf';
 import { Observable } from 'rxjs';
 import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { TripmodalPage } from './tripmodal/tripmodal.page';
-import { OrderService } from 'src/app/services/order.service';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { MapboxService } from 'src/app/services/mapbox.service';
@@ -20,30 +19,14 @@ declare const mapboxgl: any;
 })
 export class MapboxPage implements AfterViewInit {
 
-  // locationRefs: AngularFireList<any>;
-  // userRefs: AngularFireList<any>;
   order: any;
 
   instructionSteps = null;
-  // locationsCollection: AngularFirestoreCollection<any>;
-  locations!: Observable<any>;
   user = null;
-  isTracking = false;
 
   start: any;
   end: any;
-  truckLocation = [36.81585262388069, -1.281312671309479];
-  warehouseLocation = [36.78451471957826, -1.2471345977982056];
-  lastAtRestaurant = 0;
-  keepTrack = [];
-  pointHopper = {};
 
-  warehouse = turf.featureCollection([turf.point(this.warehouseLocation)]);
-  dropoffs = turf.featureCollection([]);
-  nothing = turf.featureCollection([]);
-  id = this.route.snapshot.paramMap.get('id');
-  timestamp: any;
-  lastUpdate: any;
   map: any;
 
 
@@ -55,20 +38,14 @@ export class MapboxPage implements AfterViewInit {
   @ViewChild('mapElement', { static: false }) mapElement: any;
 
   constructor(
-    // private afAuth: AngularFireAuth, private afs: AngularFirestore,
-    // private db: AngularFireDatabase,
     private modalCtrl: ModalController, private loadingCtrl: LoadingController,
-    private route: ActivatedRoute, private alertController: AlertController,
-    private authService: AuthService,
-    private mapboxService: MapboxService,
+    private authService: AuthService, private alertController: AlertController
   ) {
-    // this.checkUser();
     this.user = this.authService.user;
 
   }
 
   ngAfterViewInit() {
-    // this.getOrder();
     this.loadMap();
 
   }

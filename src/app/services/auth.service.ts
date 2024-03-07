@@ -2,6 +2,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import {
+  Auth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut
+} from '@angular/fire/auth';
+import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -14,63 +21,44 @@ export class AuthService {
 
   httpOptions = {
     headers: new HttpHeaders({
-      Accept:  'application/json',
+      Accept: 'application/json',
       Authorization: 'Bearer ' + localStorage.getItem('token')
     })
   };
   domain = localStorage.getItem('domain');
-  constructor(private http: HttpClient) {
-    // this.user = JSON.parse(localStorage.getItem('user'));
 
-    // const domain = localStorage.getItem('authenticated');
-  }
+  constructor(private auth: Auth, private firestore: Firestore) { }
 
-
-  auth(data:any, domain:any): Observable<any> {
-    return this.http.post(`${this.httpType}${domain}.${this.centralUrl}/sanctum/token`, data, this.httpOptions);
-  }
-
-  logout(): Observable<any> {
-    return this.http.get(`${this.httpType}${this.domain}.${this.centralUrl}/logout`, this.httpOptions);
-  }
-
-  org(data:any): Observable<any> {
-    return this.http.get(`${this.httpType}${data.domain}.${this.centralUrl}/tenant_exists/${data.domain}`, this.httpOptions);
-  }
-
-  getUser(): Observable<any> {
-    return this.http.get(`${this.httpType}${this.domain}.${this.centralUrl}/user`, this.httpOptions);
-  }
-
-  storeUser(domain:any, token:any): Observable<any> {
-
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Accept:  'application/json',
-        // Authorization: environment.token
-        Authorization: 'Bearer ' + token
-      })
-    };
-    return this.http.get(`${this.httpType}${domain}.${this.centralUrl}/user`, httpOptions);
-  }
-
-
-  store_User(user:any) {
-    localStorage.setItem('user', JSON.stringify(user));
-
-    setTimeout(() => {
-      // this.user = JSON.parse(localStorage.getItem('user'));
-    }, 300);
-  }
-
-  async isFirstTimeLoad() {
-    const result = await localStorage.getItem('firstTime');
-    if (result) {
-      this.firstTime = false;
+  async register({ email, password }: any) {
+    try {
+      const user = await createUserWithEmailAndPassword(this.auth, email, password);
+      console.log("🚀 ~ AuthService ~ register ~ user:", user)
+      return user;
+    } catch (e) {
+      console.log("🚀 ~ AuthService ~ register ~ e:", e)
+      return null;
     }
-    else {
-      this.firstTime = true;
-    }
-
   }
+
+  async login({ email, password }: any) {
+    try {
+      const user = await signInWithEmailAndPassword(this.auth, email, password);
+      return user;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  logout() {
+    return signOut(this.auth);
+  }
+
+
+	getUserProfile() {
+    return this.auth.currentUser;
+		const user = this.auth.currentUser;
+		console.log("🚀 ~ AuthService ~ getUserProfile ~ user:", user)
+		const userDocRef = doc(this.firestore, `users/${user?.uid}`);
+		return docData(userDocRef, { idField: 'id' });
+	}
 }

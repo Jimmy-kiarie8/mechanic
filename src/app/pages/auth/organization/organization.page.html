@@ -1,0 +1,29 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="translucent">
+    <ion-title>
+      <img src="https://logixsaas.com/wp-content/uploads/2023/08/Logixsaas-Consultancy-Limited-Logo_Approved-01-1-1.png" alt="Logixsaas logo" style="width: 100px;">
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card style="box-shadow: none">
+    <ion-card-header>
+      <img src="../../../../assets/domain.png" alt="" style="height: 30vh;">
+      <ion-card-subtitle>Logixsaas</ion-card-subtitle>
+      <ion-card-title>Welcome to Logixsaas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Choose your organization
+
+      <ion-item lines="full">
+        <ion-label position="floating">Domain</ion-label>
+        <ion-input type="text" name="domain" required [(ngModel)]="form.domain"></ion-input>
+      </ion-item>
+
+      <ion-button (click)="checkDomain()">
+        <ion-icon name="arrow-forward-circle-outline"></ion-icon> Get started
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
