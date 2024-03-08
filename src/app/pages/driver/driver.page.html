@@ -12,29 +12,20 @@
 
 <ion-content [fullscreen]="true">
   <ion-list [inset]="true">
-    <ion-item>
+    <ion-item *ngIf="requests">
         <ion-icon aria-hidden="true" name="list" slot="start"></ion-icon>
         <ion-label>
 
-        <ion-label>New Task</ion-label>
-        <ion-note color="medium">Nairobi CBD</ion-note>
+        <ion-label>{{ requests.name }}</ion-label>
+        <!-- <ion-note color="medium">Nairobi CBD</ion-note> -->
       </ion-label>
-      <ion-chip color="danger">Pending</ion-chip>
+      <ion-chip [color]="(requests.status === 'Accepted') ? 'primary' : (requests.status === 'Rejected') ? 'danger' :  'success'">{{ requests.status }}</ion-chip>
 
-      <ion-button>
+      <ion-button *ngIf="requests.status === 'Accepted'" (click)="modal(requests)">
         <ion-icon  slot="start" name="checkmark-circle"></ion-icon>
-        Accept
+        Complete
       </ion-button>
-    </ion-item>
-    <hr>
-    <ion-item>
-        <ion-icon aria-hidden="true" name="list" slot="start"></ion-icon>
-        <ion-label>
 
-        <ion-label>New Task</ion-label>
-        <ion-note color="medium">Nairobi CBD</ion-note>
-      </ion-label>
-      <ion-chip color="success">Complete</ion-chip>
     </ion-item>
   </ion-list>
 </ion-content>

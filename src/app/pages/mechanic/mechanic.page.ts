@@ -3,7 +3,8 @@ import { Subscription } from 'rxjs';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { environment } from 'src/environments/environment';
 import { ModalPage } from './modal/modal.page';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
+import { Auth } from '@angular/fire/auth';
 
 declare const mapboxgl: any;
 @Component({
@@ -17,7 +18,7 @@ export class MechanicPage implements OnInit {
   firebaseSubscription!: Subscription;
   address: any;
 
-  constructor(private firebaseService: FirebaseService, private modalCtrl: ModalController) { }
+  constructor(private firebaseService: FirebaseService, private modalCtrl: ModalController, private auth: Auth, private toastCtrl: ToastController) { }
 
   ngOnInit() {
     this.getRequests()
@@ -26,8 +27,6 @@ export class MechanicPage implements OnInit {
 
   // Mapbox Get coordinates from client address
   async getAddress(lat: any, lng: any) {
-    console.log("🚀 ~ MechanicPage ~ getAddress ~ lng:", lng)
-    console.log("🚀 ~ MechanicPage ~ getAddress ~ lat:", lat)
     // const lat = -1.1748105;
     // const lng = 36.8304102;
     // const address = 'Nairobi, kenya';
@@ -39,7 +38,6 @@ export class MechanicPage implements OnInit {
       { method: 'GET' }
     );
     const json = await query.json();
-    console.log("🚀 ~ MechanicPage ~ getCoordinates ~ json:", json.features[0].place_name)
 
       this.address = json.features[0].place_name;
 
@@ -47,8 +45,9 @@ export class MechanicPage implements OnInit {
 
 
   getRequests() {
-    this.firebaseSubscription = this.firebaseService.getItems('requests').subscribe({
+    this.firebaseSubscription = this.firebaseService.getItemsByMechanicId('requests', this.auth.currentUser?.uid).subscribe({
       next: (res: any[]) => {
+        console.log("🚀 ~ MechanicPage ~ this.firebaseSubscription=this.firebaseService.getItemsByMechanicId ~ res:", res)
         this.requests = res
 
         this.getAddress(res[0].latitude, res[0].longitude)
@@ -63,10 +62,21 @@ export class MechanicPage implements OnInit {
       }
     });
   }
+  status_update(status: any, item: any) {
+    console.log("🚀 ~ MechanicPage ~ status_update ~ item:", item)
+    this.firebaseService.updateRequestStatus(status, item.id).then((res) => {
+    console.log("🚀 ~ MechanicPage ~ this.firebaseService.updateRequestStatus ~ res:", res)
+      this.toastPresent('Status updated')
+    }).catch((error) => {
+      console.log("🚀 ~ MechanicPage ~ this.firebaseService.updateRequestStatus ~ error:", error)
+      this.toastPresent('Something went wrong')
+
+    })
+  }
 
   // Modal
   async modal(data:any) {
-    console.log("🚀 ~ MapboxPage ~ requestModal ~ data:", data)
+    this.status_update('Accepted', data)
     const modal = await this.modalCtrl.create({
       component: ModalPage,
       componentProps: { data },
@@ -74,6 +84,16 @@ export class MechanicPage implements OnInit {
       initialBreakpoint: 0.8
     });
     modal.present();
+  }
+
+
+  async toastPresent(message: any) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      duration: 2000
+    });
+    toast.present();
+
   }
 
 }

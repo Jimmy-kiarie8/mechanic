@@ -1,0 +1,17 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Rating</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="rating">
+    <ion-icon *ngFor="let i of ratingArr; let index = index"
+              [name]="index < rating ? 'star' : 'star-outline'"
+              (click)="rate(index)">
+    </ion-icon>
+  </div>
+
+
+
+</ion-content>

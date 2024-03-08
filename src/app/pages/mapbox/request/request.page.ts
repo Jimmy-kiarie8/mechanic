@@ -22,9 +22,10 @@ export class RequestPage implements OnInit {
   // this.start = [e.coords.longitude, e.coords.latitude];
 
   async requestMechanic() {
-
     const loading = await this.loadingController.create();
     await loading.present();
+
+    const uid = this.auth.currentUser?.uid;
 
     const data = {
       longitude: this.coodinates[0],
@@ -32,11 +33,12 @@ export class RequestPage implements OnInit {
       email: this.auth.currentUser?.email,
       phone: this.user.phone,
       name: this.user.name,
-      status: this.user.status
+      status: 'Pending',
+      mechanic_id: this.data.id
     }
     console.log("🚀 ~ RequestPage ~ requestMechanic ~ data:", data)
 
-    const result = await this.firebaseService.addRequest(data, this.data.id);
+    const result = await this.firebaseService.addRequest(data, uid);
     loading.dismiss();
 
     if (!result) {

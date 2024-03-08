@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, addDoc, deleteDoc, updateDoc, setDoc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, addDoc, deleteDoc, updateDoc, setDoc, query, where } from '@angular/fire/firestore';
 import { Observable, combineLatest } from 'rxjs';
 
 import { Auth } from '@angular/fire/auth';
@@ -22,7 +22,7 @@ export class FirebaseService {
     return collectionData(requestsRef, { idField: 'id'}) as Observable<Request[]>;
   }
 
-  getRequestById(id: any): Observable<Request> {
+  getRequestById_(id: any): Observable<Request> {
     const noteDocRef = doc(this.firestore, `items/${id}`);
     return docData(noteDocRef, { idField: 'id' }) as Observable<Request>;
   }
@@ -33,9 +33,22 @@ export class FirebaseService {
     return deleteDoc(noteDocRef);
   }
 
-  updateRequest(data: Request) {
-    const noteDocRef = doc(this.firestore, `items/${data.id}`);
-    return updateDoc(noteDocRef, { title: data.title, text: data.text });
+  updateRequest(status: String, uid: any) {
+    const noteDocRef = doc(this.firestore, `requests/${uid}`);
+    return updateDoc(noteDocRef, { status: status });
+  }
+
+  async updateRequestStatus(status: string, uid: any): Promise<void> {
+    console.log("🚀 ~ FirebaseService ~ updateRequestStatus ~ status:", status)
+    console.log("🚀 ~ FirebaseService ~ updateRequestStatus ~ uid:", uid)
+    try {
+      const reqDocRef = doc(this.firestore, `requests/${uid}`);
+      await updateDoc(reqDocRef, { status: status });
+      console.log("Request status updated successfully");
+    } catch (error) {
+      console.error("Error updating request status:", error);
+      throw error;
+    }
   }
 
 	async addMechanic(data: any) {
@@ -83,5 +96,19 @@ export class FirebaseService {
     const res = combineLatest([users, profiles]);
     console.log("🚀 ~ FirebaseService ~ getUsersWithProfile ~ res:", res)
     return res;
+  }
+
+
+  getItemsByMechanicId(item: string, mechanicId: any): Observable<any[]> {
+    const requestsRef = collection(this.firestore, item);
+    const queryRef = query(requestsRef, where('mechanic_id', '==', mechanicId));
+    return collectionData(queryRef, { idField: 'id' }) as Observable<any[]>;
+  }
+
+
+  getRequestById(id: any): Observable<Request> {
+    console.log("🚀 ~ FirebaseService ~ getRequestById ~ id:", id)
+    const noteDocRef = doc(this.firestore, `requests/${id}`);
+    return docData(noteDocRef, { idField: 'id' }) as Observable<Request>;
   }
 }

@@ -13,14 +13,16 @@
         <ion-icon aria-hidden="true" name="list" slot="start"></ion-icon>
         <ion-label>
 
-        <ion-label>{{ item.email }}</ion-label>
+        <ion-label>{{ item.name }}</ion-label>
+        <ion-note color="medium">{{ item.phone }}</ion-note>
+        <br>
         <ion-note color="medium">{{ address }}</ion-note>
       </ion-label>
 
       <ion-button (click)="modal(item)" color="success">
         <ion-icon  slot="icon-only" name="checkmark-circle"></ion-icon>
       </ion-button>
-      <ion-button (click)="modal(item)" color="danger">
+      <ion-button (click)="status_update('Rejected', item)" color="danger">
         <ion-icon slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-item>

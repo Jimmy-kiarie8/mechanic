@@ -26,12 +26,12 @@ export class ModalPage implements OnInit {
   }
 
   async updateRequest() {
-    await this.dataService.updateRequest(this.request);
-    const toast = await this.toastCtrl.create({
-      message: 'Request updated!.',
-      duration: 2000
-    });
-    toast.present();
+    // await this.dataService.updateRequest(this.request);
+    // const toast = await this.toastCtrl.create({
+    //   message: 'Request updated!.',
+    //   duration: 2000
+    // });
+    // toast.present();
 
   }
 }
