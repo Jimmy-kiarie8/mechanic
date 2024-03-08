@@ -8,11 +8,12 @@ export const environment = {
   mapPublicKey: 'pk.eyJ1IjoiamltbGFyYXZlbCIsImEiOiJjbDdydXA5djkwaXR2M3FwMmxwc2h3YjdqIn0.rgDAW_8AKT6dHtGHXX1DtQ',
 
   firebase: {
-    apiKey: "AIzaSyDGIpzu8fBfcmuY3VUspb7dN4vbWXxCrxU",
-    authDomain: "mechanic-app-fa676.firebaseapp.com",
-    projectId: "mechanic-app-fa676",
-    storageBucket: "mechanic-app-fa676.appspot.com",
-    messagingSenderId: "835658852955",
-    appId: "1:835658852955:web:a892c8b94a888a65ff2d7e"
+    apiKey: "AIzaSyCjc2go0axkuPECxsDdrJZiz3If1SFGwUc",
+    authDomain: "vehicle-mechanic-locator.firebaseapp.com",
+    projectId: "vehicle-mechanic-locator",
+    storageBucket: "vehicle-mechanic-locator.appspot.com",
+    messagingSenderId: "1083130456717",
+    appId: "1:1083130456717:web:a547f95c8b09dc38eed0c4",
+    measurementId: "G-B10B1H2MEE"
   }
 };
