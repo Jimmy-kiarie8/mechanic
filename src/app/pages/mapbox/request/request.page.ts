@@ -31,7 +31,8 @@ export class RequestPage implements OnInit {
       latitude: this.coodinates[1],
       email: this.auth.currentUser?.email,
       phone: this.user.phone,
-      name: this.user.name
+      name: this.user.name,
+      status: this.user.status
     }
     console.log("🚀 ~ RequestPage ~ requestMechanic ~ data:", data)
 
