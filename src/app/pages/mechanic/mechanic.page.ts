@@ -18,7 +18,14 @@ export class MechanicPage implements OnInit {
   firebaseSubscription!: Subscription;
   address: any;
 
-  constructor(private firebaseService: FirebaseService, private modalCtrl: ModalController, private auth: Auth, private toastCtrl: ToastController) { }
+
+  maxRating = 5;
+  rating = 4;
+  ratingArr: any;
+
+  constructor(private firebaseService: FirebaseService, private modalCtrl: ModalController, private auth: Auth, private toastCtrl: ToastController) {
+    this.ratingArr = Array(this.maxRating).fill(0);
+   }
 
   ngOnInit() {
     this.getRequests()
@@ -44,8 +51,11 @@ export class MechanicPage implements OnInit {
   }
 
 
-  getRequests() {
-    this.firebaseSubscription = this.firebaseService.getItemsByMechanicId('requests', this.auth.currentUser?.uid).subscribe({
+  async getRequests() {
+    // const user = await this.auth.currentUser;
+    const uid = localStorage.getItem('token');
+
+    this.firebaseSubscription = this.firebaseService.getItemsByMechanicId('requests', uid).subscribe({
       next: (res: any[]) => {
         console.log("🚀 ~ MechanicPage ~ this.firebaseSubscription=this.firebaseService.getItemsByMechanicId ~ res:", res)
         this.requests = res

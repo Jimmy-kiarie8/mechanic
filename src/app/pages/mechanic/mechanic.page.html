@@ -17,14 +17,27 @@
         <ion-note color="medium">{{ item.phone }}</ion-note>
         <br>
         <ion-note color="medium">{{ address }}</ion-note>
+        <br>
+        <ion-icon *ngFor="let i of ratingArr; let index = index"
+              [name]="index < rating ? 'star' : 'star-outline'">
+    </ion-icon>
       </ion-label>
 
+      <div *ngIf="item.status === 'Pending'; else elseBlock">
       <ion-button (click)="modal(item)" color="success">
         <ion-icon  slot="icon-only" name="checkmark-circle"></ion-icon>
       </ion-button>
       <ion-button (click)="status_update('Rejected', item)" color="danger">
         <ion-icon slot="icon-only" name="close"></ion-icon>
       </ion-button>
+    </div>
+    <ng-template #elseBlock>
+      <ion-chip [color]="(requests.status === 'Accepted') ? 'primary' : (requests.status === 'Rejected') ? 'danger' :  'success'">{{ item.status }}</ion-chip>
+    </ng-template>
+
+    <ion-button [href]="'tel:' + item.phone" color="primary">
+      <ion-icon slot="icon-only" name="call"></ion-icon>
+    </ion-button>
     </ion-item>
   </ion-list>
 </ion-content>

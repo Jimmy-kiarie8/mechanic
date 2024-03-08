@@ -82,10 +82,11 @@ export class AuthService {
 
 
 	getUserProfile() {
+    const uid = localStorage.getItem('token');
+
     // return this.auth.currentUser;
-		const user = this.auth.currentUser;
-		console.log("🚀 ~ AuthService ~ getUserProfile ~ user:", user)
-		const userDocRef = doc(this.firestore, `userProfile/${user?.uid}`);
+		// const user = this.auth.currentUser;
+		const userDocRef = doc(this.firestore, `userProfile/${uid}`);
 		return docData(userDocRef, { idField: 'id' });
 	}
 }
