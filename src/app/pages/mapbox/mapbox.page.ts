@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ViewChild, ViewEncapsulation } from '@angular
 import { environment } from 'src/environments/environment';
 import * as turf from '@turf/turf';
 import { Observable } from 'rxjs';
-import { AlertController, LoadingController, ModalController } from '@ionic/angular';
+import { AlertController, IonRouterOutlet, LoadingController, ModalController } from '@ionic/angular';
 import { TripmodalPage } from './tripmodal/tripmodal.page';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
@@ -10,6 +10,7 @@ import { MapboxService } from 'src/app/services/mapbox.service';
 import { RequestPage } from './request/request.page';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { Subscription } from 'rxjs';
+import { App } from '@capacitor/app';
 
 declare const mapboxgl: any;
 
@@ -44,9 +45,13 @@ export class MapboxPage implements AfterViewInit {
 
   constructor(
     private modalCtrl: ModalController, private loadingCtrl: LoadingController,
-    private authService: AuthService, private alertController: AlertController, private firebaseService: FirebaseService
+    private authService: AuthService, private alertController: AlertController, private firebaseService: FirebaseService,
+    private routerOutlet: IonRouterOutlet
   ) {
-
+    // if (!this.routerOutlet.canGoBack()) {
+    //   App.exitApp();
+    //   // this.guessLocation();
+    // }
   }
 
   ngAfterViewInit() {

@@ -37,13 +37,13 @@ export class DriverPage implements OnInit {
     },
   ];
 
-  setResult(ev:any) {
+  setResult(ev: any) {
     console.log(`Dismissed with role: ${ev.detail.role}`);
   }
 
 
 
-  constructor(private auth: Auth, private authService: AuthService, private firebaseService: FirebaseService,  private cd: ChangeDetectorRef, private alertCtrl: AlertController, private modalCtrl: ModalController, private loadingController: LoadingController,private alertController: AlertController, private toastCtrl: ToastController) {
+  constructor(private authService: AuthService, private firebaseService: FirebaseService, private cd: ChangeDetectorRef, private alertCtrl: AlertController, private modalCtrl: ModalController, private loadingController: LoadingController, private alertController: AlertController, private toastCtrl: ToastController) {
     this.firebaseService.getItems('users').subscribe(res => {
       this.requests = res;
       this.cd.detectChanges();
@@ -51,11 +51,7 @@ export class DriverPage implements OnInit {
   }
 
   ngOnInit() {
-    // console.log('Loaded')
-    setTimeout(() => {
     this.getRequests()
-
-    }, 3000);
   }
 
 
@@ -88,14 +84,18 @@ export class DriverPage implements OnInit {
   }
 
 
-	getUserProfile() {
-		this.user = this.authService.getUserProfile()
-	}
+  getUserProfile() {
+    this.user = this.authService.getUserProfile()
+  }
 
 
 
-  getRequests() {
-    this.firebaseSubscription = this.firebaseService.getRequestById(this.auth.currentUser?.uid).subscribe((res: any) => {
+  async getRequests() {
+    const loading = await this.loadingController.create();
+    await loading.present();
+    const uid = localStorage.getItem('token');
+    this.firebaseSubscription = this.firebaseService.getRequestById(uid).subscribe((res: any) => {
+      loading.dismiss();
       console.log("🚀 ~ DriverPage ~ this.firebaseSubscription=this.firebaseService.getRequestById ~ res:", res)
       this.requests = res
 
@@ -104,27 +104,28 @@ export class DriverPage implements OnInit {
 
 
   async status_update(status: any, item: any) {
-      const loading = await this.loadingController.create();
-      await loading.present();
+    const uid = localStorage.getItem('token');
+    const loading = await this.loadingController.create();
+    await loading.present();
     console.log("🚀 ~ MechanicPage ~ status_update ~ item:", item)
-    this.firebaseService.updateRequestStatus(status, this.auth.currentUser?.uid).then((res) => {
-    console.log("🚀 ~ MechanicPage ~ this.firebaseService.updateRequestStatus ~ res:", res)
-    loading.dismiss();
+    this.firebaseService.updateRequestStatus(status, uid).then((res) => {
+      console.log("🚀 ~ MechanicPage ~ this.firebaseService.updateRequestStatus ~ res:", res)
+      loading.dismiss();
       this.toastPresent('Status updated')
     }).catch((error) => {
       console.log("🚀 ~ MechanicPage ~ this.firebaseService.updateRequestStatus ~ error:", error)
-    loading.dismiss();
+      loading.dismiss();
       this.toastPresent('Something went wrong')
 
     })
   }
 
   // Modal
-  async modal(data:any) {
+  async modal(data: any) {
     this.status_update('Completed', data)
     const modal = await this.modalCtrl.create({
       component: RatingPage,
-      componentProps: {  },
+      componentProps: {},
       breakpoints: [0, 1],
       initialBreakpoint: 0.8
     });

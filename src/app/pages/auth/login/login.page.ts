@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, IonRouterOutlet, LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,7 @@ export class LoginPage implements OnInit {
   };
 
 
-  constructor(private fb: FormBuilder, private loadingController: LoadingController, private alertController: AlertController, private authService: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private loadingController: LoadingController, private alertController: AlertController, private authService: AuthService, private router: Router, private routerOutlet: IonRouterOutlet) {
     const isAuthenticated = localStorage.getItem('authenticated');
     const role = localStorage.getItem('role');
     if (isAuthenticated && role === 'driver') {
@@ -27,6 +28,9 @@ export class LoginPage implements OnInit {
     } else {
       this.router.navigate(['/mechanic']);
     }
+    // if (!this.routerOutlet.canGoBack()) {
+    //   App.exitApp();
+    // }
   }
 
   // Easy access for form fields
@@ -56,7 +60,7 @@ export class LoginPage implements OnInit {
       localStorage.setItem('authenticated', '1');
       localStorage.setItem('token', user.uid);
       this.getUserProfile();
-      this.router.navigateByUrl('/home', { replaceUrl: true });
+      this.router.navigateByUrl('/login', { replaceUrl: true });
     } else {
       this.showAlert('Registration failed', 'Please try again!');
     }
@@ -73,8 +77,15 @@ export class LoginPage implements OnInit {
       console.log("🚀 ~ LoginPage ~ login ~ user:", user)
       localStorage.setItem('authenticated', '1');
       localStorage.setItem('token', user.user.uid);
-      this.getUserProfile();
-      this.router.navigateByUrl('/home', { replaceUrl: true });
+      await this.getUserProfile();
+
+      const role = localStorage.getItem('role');
+
+      if (role === 'mechanic') {
+        this.router.navigateByUrl('/mechanic', { replaceUrl: true });
+      } else {
+        this.router.navigateByUrl('/home', { replaceUrl: true });
+      }
     } else {
       this.showAlert('Login failed', 'Please try again!');
     }
@@ -89,6 +100,8 @@ export class LoginPage implements OnInit {
       } else {
         localStorage.setItem('role', 'mechanic');
       }
+      localStorage.setItem('name', res.name);
+      localStorage.setItem('phone', res.phone);
     });
   }
 

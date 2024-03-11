@@ -90,7 +90,7 @@ export class AccountPage implements AfterViewInit {
     geolocate.on('geolocate', (e: any) => {
       this.addMarker([e.coords.longitude, e.coords.latitude]);
 
-      this.location = {lat: e.coords.longitude, lng: e.coords.latitude};
+      this.location = {lat: e.coords.latitude, lng: e.coords.longitude};
 
     });
 

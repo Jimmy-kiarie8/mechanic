@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { environment } from 'src/environments/environment';
 import { ModalPage } from './modal/modal.page';
-import { ModalController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { Auth } from '@angular/fire/auth';
 
 declare const mapboxgl: any;
@@ -23,9 +23,9 @@ export class MechanicPage implements OnInit {
   rating = 4;
   ratingArr: any;
 
-  constructor(private firebaseService: FirebaseService, private modalCtrl: ModalController, private auth: Auth, private toastCtrl: ToastController) {
+  constructor(private firebaseService: FirebaseService, private modalCtrl: ModalController, private auth: Auth, private toastCtrl: ToastController, private loadingController: LoadingController) {
     this.ratingArr = Array(this.maxRating).fill(0);
-   }
+  }
 
   ngOnInit() {
     this.getRequests()
@@ -46,7 +46,7 @@ export class MechanicPage implements OnInit {
     );
     const json = await query.json();
 
-      this.address = json.features[0].place_name;
+    this.address = json.features[0].place_name;
 
   }
 
@@ -72,20 +72,25 @@ export class MechanicPage implements OnInit {
       }
     });
   }
-  status_update(status: any, item: any) {
+  async status_update(status: any, item: any) {
+
+    const loading = await this.loadingController.create();
+    await loading.present();
     console.log("🚀 ~ MechanicPage ~ status_update ~ item:", item)
     this.firebaseService.updateRequestStatus(status, item.id).then((res) => {
-    console.log("🚀 ~ MechanicPage ~ this.firebaseService.updateRequestStatus ~ res:", res)
+      console.log("🚀 ~ MechanicPage ~ this.firebaseService.updateRequestStatus ~ res:", res)
+      loading.dismiss();
       this.toastPresent('Status updated')
     }).catch((error) => {
       console.log("🚀 ~ MechanicPage ~ this.firebaseService.updateRequestStatus ~ error:", error)
+      loading.dismiss();
       this.toastPresent('Something went wrong')
 
     })
   }
 
   // Modal
-  async modal(data:any) {
+  async modal(data: any) {
     this.status_update('Accepted', data)
     const modal = await this.modalCtrl.create({
       component: ModalPage,

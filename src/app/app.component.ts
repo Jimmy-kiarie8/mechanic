@@ -1,5 +1,12 @@
 import { Component } from '@angular/core';
 import { AuthService } from './services/auth.service';
+import { Router } from '@angular/router';
+
+interface User {
+  name: string;
+  phone: string;
+  role: string
+}
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -9,17 +16,37 @@ export class AppComponent {
   public appPages = [
     { title: 'Home', url: '/home', icon: 'home' },
     { title: 'Driver', url: '/driver', icon: 'speedometer' },
-    { title: 'Mechanic', url: '/mechanic', icon: 'car' },
+    { title: 'Requests', url: '/mechanic', icon: 'car' },
+    { title: 'Account', url: '/account', icon: 'car' },
   ];
-  user: any;
+  user: User = {
+    name: '',
+    phone: '',
+    role: '',
+  };
   public labels = [];
-  // public labels = ['Share', 'Settings', 'Profile'];
-  constructor(private authService: AuthService) {
+
+  constructor(private authService: AuthService, private router: Router) {
+    // Populate user properties with data from localStorage if available
+    const storedName = localStorage.getItem('name');
+    const storedPhone = localStorage.getItem('phone');
+    const storedRole = localStorage.getItem('role');
+
+    // Check if storedName and storedPhone are not null before assigning
+    if (storedName !== null) {
+      this.user.name = storedName;
+    }
+    if (storedPhone !== null) {
+      this.user.phone = storedPhone;
+    }
+    if (storedRole !== null) {
+      this.user.role = storedRole;
+    }
+
     setTimeout(() => {
-      this.getUserProfile()
-    }, 5000);
+      this.getMenu()
+    }, 1000);
   }
-  // constructor(public auth: AngularFireAuth) {}
 
 
 
@@ -33,7 +60,7 @@ export class AppComponent {
 
   getMenu() {
 
-    if (this.user.isDriver) {
+    if (this.user.role === 'driver') {
       this.appPages = [
         { title: 'Home', url: '/home', icon: 'home' },
         { title: 'Driver', url: '/driver', icon: 'speedometer' },
@@ -41,10 +68,17 @@ export class AppComponent {
     } else {
       this.appPages = [
         { title: 'Home', url: '/home', icon: 'home' },
-        { title: 'Mechanic', url: '/mechanic', icon: 'car' },
+        { title: 'Requests', url: '/mechanic', icon: 'car' },
+        { title: 'Account', url: '/account', icon: 'car' },
       ];
 
     }
+
+  }
+
+  logout() {
+    localStorage.clear()
+    this.router.navigateByUrl('/login', { replaceUrl: true });
 
   }
 
